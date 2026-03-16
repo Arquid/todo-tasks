@@ -1,0 +1,106 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  margin-top: 80px;
+}
+
+.todo-card {
+  background: white;
+  padding: 20px;
+  width: 400px;
+  border-radius: 10px;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+.input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+input {
+  flex: 1;
+  padding: 8px;
+}
+
+button {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  border: none;
+  background: #4ca8af;
+  color: white;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+.todo-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fafafa;
+  padding: 8px;
+  border-radius: 5px;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.todo-item:hover {
+  background: #f0f0f0;
+}
+
+.todo-item span {
+  flex: 1;
+  word-break: break-word;
+  cursor: pointer;
+}
+
+.completed {
+  text-decoration: line-through;
+  color: gray;
+}
+
+.delete-btn {
+  margin-left: 10px;
+  color: red;
+  background: none;
+  border: none;
+  font-size: 16px;
+}
+
+.filters {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.filters button {
+  padding: 5px 10px;
+}
+
+.filters button.active {
+  background: #333;
+  color: white;
+}
+
+.clear {
+  margin-top: 15px;
+}
