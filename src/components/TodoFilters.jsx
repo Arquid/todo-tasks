@@ -4,18 +4,21 @@ function TodoFilters({ setFilter, filter }) {
       <button
         onClick={() => setFilter("all")}
         className={filter === "all" ? "active" : ""}
+        aria-pressed={filter === "all"}
       >
         All
       </button>
       <button
         onClick={() => setFilter("active")}
         className={filter === "active" ? "active" : ""}
+        aria-pressed={filter === "active"}
       >
         Active
       </button>
       <button
         onClick={() => setFilter("completed")}
         className={filter === "completed" ? "active" : ""}
+        aria-pressed={filter === "completed"}
       >
         Completed
       </button>
