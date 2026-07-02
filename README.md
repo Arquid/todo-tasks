@@ -10,7 +10,8 @@ A simple Todo tasks application built with React.
 - Filter tasks (All / Active / Completed)
 - LocalStorage persistence
 - Prevent duplicate tasks
-
+- Edit task name
+  
 ## Tech Stack
 
 - React
