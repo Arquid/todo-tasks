@@ -22,6 +22,7 @@ function TodoItem({ todo, toggleTodo, deleteTodo, editTodo }) {
   return (
     <li className="todo-item">
       <label className="todo-label">
+        <span className={`priority-dot priority-${todo.priority || "normal"}`} aria-hidden="true" />
         <input
           type="checkbox"
           checked={todo.completed}

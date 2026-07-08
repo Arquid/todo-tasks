@@ -24,6 +24,9 @@ function App() {
   const [pendingDeleteId, setPendingDeleteId] = useState(null);
   const [pendingClearCompleted, setPendingClearCompleted] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [priority, setPriority] = useState("normal");
+
+  const PRIORITY_ORDER = { high: 0, normal: 1, low: 2};
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -50,11 +53,13 @@ function App() {
     const newTodo = {
       id: crypto.randomUUID(),
       text: trimmed,
-      completed: false
+      completed: false,
+      priority
     };
 
     setTodos([...todos, newTodo]);
     setInput("");
+    setPriority("normal");
 };
 
   const toggleTodo = (id) => {
@@ -99,11 +104,13 @@ function App() {
     setPendingDeleteId(null);
   }
 
-  const filteredTodos = todos.filter(todo => {
-    if (filter === "active") return !todo.completed;
-    if (filter === "completed") return todo.completed;
-    return true;
-  });
+  const filteredTodos = todos
+    .filter(todo => {
+      if (filter === "active") return !todo.completed;
+      if (filter === "completed") return todo.completed;
+      return true;
+    })
+    .sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]);
 
   const activeCount = todos.filter(todo => !todo.completed).length;
 
@@ -129,6 +136,8 @@ function App() {
           input={input}
           setInput={setInput}
           addTodo={addTodo}
+          priority={priority}
+          setPriority={setPriority}
         />
         <TodoList
           todos={filteredTodos}

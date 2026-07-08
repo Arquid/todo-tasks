@@ -5,6 +5,7 @@ A simple Todo tasks application built with React.
 ## Features
 
 - Add tasks
+- Set task priority (Low / Normal / High) with color-coded indicator and priority-based sorting
 - Mark tasks as completed
 - Delete tasks (with confirmation dialog)
 - Edit task name (double-click or edit button, Enter to save, Escape to cancel)
