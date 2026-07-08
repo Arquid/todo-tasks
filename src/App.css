@@ -199,15 +199,3 @@ ul {
 .priority-select.priority-low {
   background: #7fb37f;
 }
-
-.priority-high {
-  background: #c0392b;
-}
-
-.priority-normal {
-  background: #e5a437;
-}
-
-.priority-low {
-  background: #7fb37f;
-}

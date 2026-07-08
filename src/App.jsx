@@ -118,7 +118,7 @@ function App() {
       if (filter === "completed") return todo.completed;
       return true;
     })
-    .sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]);
+    .sort((a, b) => PRIORITY_ORDER[a.priority || "normal"] - PRIORITY_ORDER[b.priority || "normal"]);
 
   const activeCount = todos.filter(todo => !todo.completed).length;
 
