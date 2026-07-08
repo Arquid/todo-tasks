@@ -175,11 +175,29 @@ ul {
   padding: 8px;
 }
 
-.todo-label .priority-dot {
-  width: 10px;
-  height: 10px;
+.priority-select {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  border: none;
   border-radius: 50%;
-  flex: 0 0 10px;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  color: transparent;
+}
+
+.priority-select.priority-high {
+  background: #c0392b;
+}
+
+.priority-select.priority-normal {
+  background: #e5a437;
+}
+
+.priority-select.priority-low {
+  background: #7fb37f;
 }
 
 .priority-high {

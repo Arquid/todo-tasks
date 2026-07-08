@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function TodoItem({ todo, toggleTodo, deleteTodo, editTodo }) {
+function TodoItem({ todo, toggleTodo, deleteTodo, editTodo, changePriority }) {
   const [isEditing, setIsediting] = useState(false);
   const [draft, setDraft] = useState(todo.text);
 
@@ -22,11 +22,21 @@ function TodoItem({ todo, toggleTodo, deleteTodo, editTodo }) {
   return (
     <li className="todo-item">
       <label className="todo-label">
-        <span className={`priority-dot priority-${todo.priority || "normal"}`} aria-hidden="true" />
+        <select
+          className={`priority-select priority-${todo.priority || "normal"}`}
+          value={todo.priority || "normal"}
+          onChange={(e) => changePriority(todo.id, e.target.value)}
+          aria-label={`Priority for task: ${todo.text}`}
+        >
+          <option value="low">Low</option>
+          <option value="normal">Normal</option>
+          <option value="high">High</option>
+        </select>
         <input
           type="checkbox"
           checked={todo.completed}
           onChange={() => toggleTodo(todo.id)}
+          aria-label={`Mark task as complete: ${todo.text}`}
         />
         {isEditing ? (
           <input

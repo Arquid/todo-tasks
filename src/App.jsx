@@ -91,6 +91,14 @@ function App() {
     );
   };
 
+  const changePriority = (id, newPriority) => {
+    setTodos(
+      todos.map(todo =>
+        todo.id === id ? { ...todo, priority: newPriority } : todo
+      )
+    );
+  };
+
   const deleteTodo = (id) => {
     setPendingDeleteId(id);
   };
@@ -144,6 +152,7 @@ function App() {
           toggleTodo={toggleTodo}
           deleteTodo={deleteTodo}
           editTodo={editTodo}
+          changePriority={changePriority}
         />
         <p>{activeCount} tasks left</p>
         <TodoFilters setFilter={setFilter} filter={filter} />
