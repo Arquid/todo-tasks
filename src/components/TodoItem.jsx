@@ -27,7 +27,6 @@ function TodoItem({ todo, toggleTodo, deleteTodo, editTodo }) {
           checked={todo.completed}
           onChange={() => toggleTodo(todo.id)}
         />
-
         {isEditing ? (
           <input
             className="edit-input"
@@ -49,7 +48,15 @@ function TodoItem({ todo, toggleTodo, deleteTodo, editTodo }) {
           </span>
         )}
       </label>
-
+      {!isEditing && (
+        <button
+          className="edit-btn"
+          onClick={startEditing}
+          aria-label={`Edit task: ${todo.text}`}
+        >
+          ✏️
+        </button>
+      )}
       <button
         className="delete-btn"
         onClick={() => deleteTodo(todo.id)}

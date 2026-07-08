@@ -22,15 +22,20 @@ function App() {
   const [input, setInput] = useState("");
   const [filter, setFilter] = useState("all");
   const [pendingDeleteId, setPendingDeleteId] = useState(null);
+  const [pendingClearCompleted, setPendingClearCompleted] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    try {
-      localStorage.setItem("todos", JSON.stringify(todos));
-    } catch (error) {
-      console.error("Failed to save todos to localStorage:", error);
-    }
-  }, [todos]);
+    const timeoutId = setTimeout(() => {
+      try {
+        localStorage.setItem("todos", JSON.stringify(todos));
+      } catch (error) {
+        console.error("Failed to save todos to localStorage:", error);
+      }
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+    }, [todos]);
 
   const addTodo = () => {
     const trimmed = input.trim();
@@ -43,7 +48,7 @@ function App() {
     }
 
     const newTodo = {
-      id: Date.now(),
+      id: crypto.randomUUID(),
       text: trimmed,
       completed: false
     };
@@ -103,8 +108,18 @@ function App() {
   const activeCount = todos.filter(todo => !todo.completed).length;
 
   const clearCompleted = () => {
-    setTodos(todos.filter(todo => !todo.completed));
+    if (!todos.some(todo => todo.completed)) return;
+    setPendingClearCompleted(true);
   };
+
+  const confirmClearCompleted = () => {
+    setTodos(todos.filter(todo => !todo.completed));
+    setPendingClearCompleted(false);
+  }
+
+  const cancelClearCompleted = () => {
+    setPendingClearCompleted(false);
+  }
 
   return (
     <div className="container">
@@ -138,6 +153,14 @@ function App() {
           message={"Are you sure you want to delete this task?"}
           onConfirm={confirmDelete}
           onCancel={cancelDelete}
+        />
+      )}
+
+      {pendingClearCompleted && (
+        <ConfirmDialog
+          message={"Are you sure you want to clear all completed tasks?"}
+          onConfirm={confirmClearCompleted}
+          onCancel={cancelClearCompleted}
         />
       )}
     </div>

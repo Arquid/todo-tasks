@@ -6,12 +6,15 @@ A simple Todo tasks application built with React.
 
 - Add tasks
 - Mark tasks as completed
-- Delete tasks
+- Delete tasks (with confirmation dialog)
+- Edit task name (double-click or edit button, Enter to save, Escape to cancel)
 - Filter tasks (All / Active / Completed)
-- LocalStorage persistence
+- Clear all completed tasks (with confirmation dialog)
+- LocalStorage persistence (debounced writes, resilient to corrupted data)
 - Prevent duplicate tasks
-- Edit task name
-  
+- Keyboard and screen-reader accessible (checkbox toggle, labeled buttons, `aria-pressed` filters)
+- Empty state message when no tasks match the current filter
+
 ## Tech Stack
 
 - React

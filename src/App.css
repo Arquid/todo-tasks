@@ -92,6 +92,14 @@ ul {
   font-size: 16px;
 }
 
+.edit-btn {
+  margin-left: 10px;
+  color: #4ca8af;
+  background: none;
+  border: none;
+  font-size: 16px;
+}
+
 .filters {
   display: flex;
   justify-content: center;
