@@ -1,8 +1,8 @@
 import TodoItem from "./TodoItem";
 
-function TodoList({ todos, toggleTodo, deleteTodo, editTodo, changePriority }) {
+function TodoList({ todos, toggleTodo, deleteTodo, editTodo, changePriority, changeDueDate }) {
   if (todos.length === 0) {
-    return <p className="empty-state">No tasks here</p>
+    return <p className="empty-state">No tasks here</p>;
   }
 
   return (
@@ -15,6 +15,7 @@ function TodoList({ todos, toggleTodo, deleteTodo, editTodo, changePriority }) {
           deleteTodo={deleteTodo}
           editTodo={editTodo}
           changePriority={changePriority}
+          changeDueDate={changeDueDate}
         />
       ))}
     </ul>

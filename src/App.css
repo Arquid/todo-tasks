@@ -199,3 +199,20 @@ ul {
 .priority-select.priority-low {
   background: #7fb37f;
 }
+
+.due-date-input {
+  flex: 0 0 auto;
+  width: 130px;
+  padding: 4px 6px;
+  font-size: 13px;
+  color: #666;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: white;
+}
+
+.due-date-input.overdue {
+  border-color: #c0392b;
+  color: #c0392b;
+  font-weight: bold;
+}

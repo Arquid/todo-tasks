@@ -25,6 +25,7 @@ function App() {
   const [pendingClearCompleted, setPendingClearCompleted] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [priority, setPriority] = useState("normal");
+  const [dueDate, setDueDate] = useState("");
 
   const PRIORITY_ORDER = { high: 0, normal: 1, low: 2};
 
@@ -54,13 +55,15 @@ function App() {
       id: crypto.randomUUID(),
       text: trimmed,
       completed: false,
-      priority
+      priority,
+      dueDate: dueDate || null
     };
 
     setTodos([...todos, newTodo]);
     setInput("");
     setPriority("normal");
-};
+    setDueDate("");
+  };
 
   const toggleTodo = (id) => {
     setTodos(
@@ -95,6 +98,14 @@ function App() {
     setTodos(
       todos.map(todo =>
         todo.id === id ? { ...todo, priority: newPriority } : todo
+      )
+    );
+  };
+
+  const changeDueDate = (id, newDueDate) => {
+    setTodos(
+      todos.map(todo =>
+        todo.id === id ? { ...todo, dueDate: newDueDate || null } : todo
       )
     );
   };
@@ -146,6 +157,8 @@ function App() {
           addTodo={addTodo}
           priority={priority}
           setPriority={setPriority}
+          dueDate={dueDate}
+          setDueDate={setDueDate}
         />
         <TodoList
           todos={filteredTodos}
@@ -153,6 +166,7 @@ function App() {
           deleteTodo={deleteTodo}
           editTodo={editTodo}
           changePriority={changePriority}
+          changeDueDate={changeDueDate}
         />
         <p>{activeCount} tasks left</p>
         <TodoFilters setFilter={setFilter} filter={filter} />

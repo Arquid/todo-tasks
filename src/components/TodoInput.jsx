@@ -1,4 +1,4 @@
-function TodoInput({ input, setInput, priority, setPriority, addTodo }) {
+function TodoInput({ input, setInput, priority, setPriority, dueDate, setDueDate, addTodo }) {
   return (
     <div className="input-row">
       <input
@@ -20,6 +20,13 @@ function TodoInput({ input, setInput, priority, setPriority, addTodo }) {
         <option value="normal">Normal</option>
         <option value="high">High</option>
       </select>
+      <input
+        type="date"
+        value={dueDate}
+        onChange={(e) => setDueDate(e.target.value)}
+        aria-label="Due date"
+        className="due-date-input"
+      />
       <button onClick={addTodo}>Add</button>
     </div>
   );

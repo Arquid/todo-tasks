@@ -1,6 +1,12 @@
 import { useState } from "react";
 
-function TodoItem({ todo, toggleTodo, deleteTodo, editTodo, changePriority }) {
+function isOverdue(dueDate, completed) {
+  if (!dueDate || completed) return false;
+  const today = new Date().toISOString().split("T")[0];
+  return dueDate < today;
+}
+
+function TodoItem({ todo, toggleTodo, deleteTodo, editTodo, changePriority, changeDueDate }) {
   const [isEditing, setIsediting] = useState(false);
   const [draft, setDraft] = useState(todo.text);
 
@@ -59,6 +65,13 @@ function TodoItem({ todo, toggleTodo, deleteTodo, editTodo, changePriority }) {
           </span>
         )}
       </label>
+      <input
+        type="date"
+        className={`due-date-input ${isOverdue(todo.dueDate, todo.completed) ? "overdue" : ""}`}
+        value={todo.dueDate || ""}
+        onChange={(e) => changeDueDate(todo.id, e.target.value)}
+        aria-label={`Due date for task: ${todo.text}`}
+      />
       {!isEditing && (
         <button
           className="edit-btn"
