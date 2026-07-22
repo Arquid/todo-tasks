@@ -1,5 +1,7 @@
 # React Todo Tasks App
 
+![CI](https://github.com/Arquid/todo-tasks/actions/workflows/ci.yml/badge.svg)
+
 A simple Todo tasks application built with React.
 
 ## Features
@@ -22,6 +24,7 @@ A simple Todo tasks application built with React.
 - JavaScript
 - CSS
 - Vite
+- Vitest + React Testing Library (tests)
 
 ## Installation
 
@@ -30,3 +33,17 @@ git clone https://github.com/Arquid/todo-tasks.git
 cd todo-tasks
 npm install
 npm run dev
+```
+
+## Testing
+
+```bash
+npm run test        # run the test suite once
+npm run test:watch  # re-run tests on file changes
+```
+
+Tests cover adding, editing, completing, deleting, filtering, prioritizing and persisting tasks, including error and empty-state cases.
+
+## CI
+
+Every push and pull request runs lint, tests, and a production build via [GitHub Actions](.github/workflows/ci.yml).
