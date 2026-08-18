@@ -2,6 +2,7 @@ function TodoInput({ input, setInput, priority, setPriority, dueDate, setDueDate
   return (
     <div className="input-row">
       <input
+        className="text-input"
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={(e) => {

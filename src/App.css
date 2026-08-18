@@ -1,3 +1,9 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   font-family: Arial, sans-serif;
   background: #f2f2f2;
@@ -7,12 +13,13 @@ body {
   display: flex;
   justify-content: center;
   margin-top: 80px;
+  padding: 0 20px;
 }
 
 .todo-card {
   background: white;
   padding: 20px;
-  width: 400px;
+  width: min(480px, 100%);
   border-radius: 10px;
   box-shadow: 0 5px 10px rgba(0,0,0,0.1);
 }
@@ -24,13 +31,19 @@ h1 {
 
 .input-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 15px;
 }
 
 input {
   flex: 1;
+  min-width: 0;
   padding: 8px;
+}
+
+.text-input {
+  flex: 1 1 140px;
 }
 
 button {
@@ -53,8 +66,10 @@ ul {
 
 .todo-item {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  row-gap: 8px;
   background: #fafafa;
   padding: 8px;
   border-radius: 5px;
@@ -186,6 +201,11 @@ ul {
   -webkit-appearance: none;
   cursor: pointer;
   color: transparent;
+}
+
+.priority-select option {
+  color: #333;
+  background: white;
 }
 
 .priority-select.priority-high {
