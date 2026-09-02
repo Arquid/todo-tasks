@@ -1,9 +1,15 @@
 import { useState } from "react";
 
+function todayAsLocalDateString() {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${now.getFullYear()}-${month}-${day}`;
+}
+
 function isOverdue(dueDate, completed) {
   if (!dueDate || completed) return false;
-  const today = new Date().toISOString().split("T")[0];
-  return dueDate < today;
+  return dueDate < todayAsLocalDateString();
 }
 
 function TodoItem({ todo, toggleTodo, deleteTodo, editTodo, changePriority, changeDueDate }) {
