@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { render, screen, within, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
 
@@ -128,6 +128,22 @@ describe("editing tasks", () => {
     expect(screen.getByText("Buy milk")).toBeInTheDocument();
   });
 
+  it("rejects renaming a task to another existing task's name", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.type(screen.getByPlaceholderText("Add task..."), "Buy milk{Enter}");
+    await user.type(screen.getByPlaceholderText("Add task..."), "Buy eggs{Enter}");
+    await user.click(screen.getByRole("button", { name: "Edit task: Buy eggs" }));
+
+    const editInput = screen.getByDisplayValue("Buy eggs");
+    await user.clear(editInput);
+    await user.type(editInput, "Buy milk{Enter}");
+
+    expect(screen.getByText("Task already exists!")).toBeInTheDocument();
+    expect(screen.getByText("Buy eggs")).toBeInTheDocument();
+  });
+
   it("changes a task's priority after creation", async () => {
     const user = userEvent.setup();
     render(<App />);
@@ -185,6 +201,19 @@ describe("clear completed", () => {
     expect(screen.queryByText(/are you sure/i)).not.toBeInTheDocument();
   });
 
+  it("keeps all tasks when clearing completed is cancelled", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.type(screen.getByPlaceholderText("Add task..."), "Task A{Enter}");
+    await user.click(screen.getByRole("checkbox", { name: /mark task as complete: task a/i }));
+
+    await user.click(screen.getByRole("button", { name: "Clear completed" }));
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+
+    expect(screen.getByText("Task A")).toBeInTheDocument();
+  });
+
   it("removes only completed tasks after confirmation", async () => {
     const user = userEvent.setup();
     render(<App />);
@@ -198,6 +227,87 @@ describe("clear completed", () => {
 
     expect(screen.queryByText("Task A")).not.toBeInTheDocument();
     expect(screen.getByText("Task B")).toBeInTheDocument();
+  });
+});
+
+describe("due dates", () => {
+  it("assigns the selected due date to a new task", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    fireEvent.change(screen.getByLabelText("Due date"), { target: { value: "2099-12-31" } });
+    await user.type(screen.getByPlaceholderText("Add task..."), "Plan trip{Enter}");
+
+    const dueDateInput = screen.getByLabelText("Due date for task: Plan trip");
+    expect(dueDateInput).toHaveValue("2099-12-31");
+    expect(dueDateInput).not.toHaveClass("overdue");
+  });
+
+  it("marks an incomplete task with a past due date as overdue", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.type(screen.getByPlaceholderText("Add task..."), "Old task{Enter}");
+    const dueDateInput = screen.getByLabelText("Due date for task: Old task");
+
+    fireEvent.change(dueDateInput, { target: { value: "2020-01-01" } });
+
+    expect(dueDateInput).toHaveClass("overdue");
+  });
+
+  it("does not mark a completed task as overdue even with a past due date", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.type(screen.getByPlaceholderText("Add task..."), "Old task{Enter}");
+    const dueDateInput = screen.getByLabelText("Due date for task: Old task");
+    fireEvent.change(dueDateInput, { target: { value: "2020-01-01" } });
+    expect(dueDateInput).toHaveClass("overdue");
+
+    await user.click(screen.getByRole("checkbox", { name: /mark task as complete: old task/i }));
+
+    expect(dueDateInput).not.toHaveClass("overdue");
+  });
+
+  it("changes a task's due date after creation", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.type(screen.getByPlaceholderText("Add task..."), "Task{Enter}");
+    const dueDateInput = screen.getByLabelText("Due date for task: Task");
+
+    fireEvent.change(dueDateInput, { target: { value: "2099-06-15" } });
+
+    expect(dueDateInput).toHaveValue("2099-06-15");
+  });
+});
+
+describe("debounced persistence", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("coalesces rapid changes into a single localStorage write after settling", () => {
+    vi.useFakeTimers();
+    const setItemSpy = vi.spyOn(Storage.prototype, "setItem");
+
+    render(<App />);
+    const input = screen.getByPlaceholderText("Add task...");
+    const todosWrites = () => setItemSpy.mock.calls.filter(([key]) => key === "todos");
+
+    fireEvent.change(input, { target: { value: "Task A" } });
+    fireEvent.keyDown(input, { key: "Enter" });
+    fireEvent.change(input, { target: { value: "Task B" } });
+    fireEvent.keyDown(input, { key: "Enter" });
+
+    expect(todosWrites()).toHaveLength(0);
+
+    vi.advanceTimersByTime(299);
+    expect(todosWrites()).toHaveLength(0);
+
+    vi.advanceTimersByTime(1);
+    expect(todosWrites()).toHaveLength(1);
+    expect(JSON.parse(todosWrites()[0][1])).toHaveLength(2);
   });
 });
 

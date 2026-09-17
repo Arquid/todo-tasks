@@ -57,18 +57,24 @@ The app runs at `http://localhost:5173` by default.
 | `npm run lint` | Run ESLint over the project |
 | `npm run test` | Run the test suite once |
 | `npm run test:watch` | Re-run tests on file changes |
+| `npm run test:coverage` | Run tests and print a coverage report |
 
 ## Testing
 
-Tests use [Vitest](https://vitest.dev/) and [React Testing Library](https://testing-library.com/react), exercising the app the way a user would rather than mocking internals. Coverage includes adding, editing, completing, deleting, filtering, prioritizing, and persisting tasks, plus error and empty-state cases.
+Tests use [Vitest](https://vitest.dev/) and [React Testing Library](https://testing-library.com/react), exercising the app the way a user would rather than mocking internals. Coverage includes adding, editing, completing, deleting, filtering, prioritizing, setting due dates, and persisting tasks (including debounced writes), plus error and empty-state cases.
 
 ```bash
 npm run test
+npm run test:coverage
 ```
+
+CI enforces minimum coverage thresholds (90% statements/functions/lines, 80% branches) so coverage can't silently regress.
 
 ## CI
 
-Every push and pull request runs lint, tests, and a production build via [GitHub Actions](.github/workflows/ci.yml) — nothing broken merges quietly.
+Every push and pull request runs lint, tests with coverage, and a production build via [GitHub Actions](.github/workflows/ci.yml) — nothing broken merges quietly. The coverage report is uploaded as a build artifact for inspection.
+
+Dependency updates (npm packages and GitHub Actions) are proposed weekly via [Dependabot](.github/dependabot.yml).
 
 ## Project Structure
 
