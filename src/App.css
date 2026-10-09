@@ -65,11 +65,10 @@ ul {
 }
 
 .todo-item {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
-  row-gap: 8px;
+  gap: 6px 8px;
   background: #fafafa;
   padding: 8px;
   border-radius: 5px;
@@ -85,12 +84,19 @@ ul {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex: 1;
   cursor: pointer;
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+.todo-label input[type="checkbox"] {
+  flex: 0 0 auto;
 }
 
 .todo-item span {
   flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
   word-break: break-word;
 }
 
@@ -100,19 +106,23 @@ ul {
 }
 
 .delete-btn {
-  margin-left: 10px;
+  margin-left: 0;
   color: red;
   background: none;
   border: none;
   font-size: 16px;
+  padding: 8px;
+  grid-column: 3;
 }
 
 .edit-btn {
-  margin-left: 10px;
+  margin-left: 0;
   color: #4ca8af;
   background: none;
   border: none;
   font-size: 16px;
+  padding: 8px;
+  grid-column: 2;
 }
 
 .filters {
@@ -222,7 +232,10 @@ ul {
 
 .due-date-input {
   flex: 0 0 auto;
-  width: 130px;
+  justify-self: start;
+  width: 100%;
+  max-width: 130px;
+  min-width: 0;
   padding: 4px 6px;
   font-size: 13px;
   color: #666;
