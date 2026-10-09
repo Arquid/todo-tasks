@@ -33,17 +33,17 @@ function TodoItem({ todo, toggleTodo, deleteTodo, editTodo, changePriority, chan
 
   return (
     <li className="todo-item">
+      <select
+        className={`priority-select priority-${todo.priority || "normal"}`}
+        value={todo.priority || "normal"}
+        onChange={(e) => changePriority(todo.id, e.target.value)}
+        aria-label={`Priority for task: ${todo.text}`}
+      >
+        <option value="low">Low</option>
+        <option value="normal">Normal</option>
+        <option value="high">High</option>
+      </select>
       <label className="todo-label">
-        <select
-          className={`priority-select priority-${todo.priority || "normal"}`}
-          value={todo.priority || "normal"}
-          onChange={(e) => changePriority(todo.id, e.target.value)}
-          aria-label={`Priority for task: ${todo.text}`}
-        >
-          <option value="low">Low</option>
-          <option value="normal">Normal</option>
-          <option value="high">High</option>
-        </select>
         <input
           type="checkbox"
           checked={todo.completed}
