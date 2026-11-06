@@ -157,6 +157,70 @@ describe("editing tasks", () => {
   });
 });
 
+describe("error message", () => {
+  it("is announced as an alert inside the card", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.type(screen.getByPlaceholderText("Add task..."), "Buy milk{Enter}");
+    await user.type(screen.getByPlaceholderText("Add task..."), "buy milk{Enter}");
+
+    const alert = screen.getByRole("alert");
+    expect(alert).toHaveTextContent("Task already exists!");
+    expect(alert.closest(".todo-card")).not.toBeNull();
+  });
+
+  it("disappears when the user starts typing again", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.type(screen.getByPlaceholderText("Add task..."), "Buy milk{Enter}");
+    await user.type(screen.getByPlaceholderText("Add task..."), "buy milk{Enter}");
+    expect(screen.getByRole("alert")).toBeInTheDocument();
+
+    await user.type(screen.getByPlaceholderText("Add task..."), "x");
+
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("disappears after the next successful add", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.type(screen.getByPlaceholderText("Add task..."), "Buy milk{Enter}");
+    await user.type(screen.getByPlaceholderText("Add task..."), "buy milk{Enter}");
+    expect(screen.getByRole("alert")).toBeInTheDocument();
+
+    await user.clear(screen.getByPlaceholderText("Add task..."));
+    await user.type(screen.getByPlaceholderText("Add task..."), "Buy eggs{Enter}");
+
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(screen.getByText("Buy eggs")).toBeInTheDocument();
+  });
+
+  it("disappears after a successful rename", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.type(screen.getByPlaceholderText("Add task..."), "Buy milk{Enter}");
+    await user.type(screen.getByPlaceholderText("Add task..."), "Buy eggs{Enter}");
+    await user.click(screen.getByRole("button", { name: "Edit task: Buy eggs" }));
+
+    let editInput = screen.getByDisplayValue("Buy eggs");
+    await user.clear(editInput);
+    await user.type(editInput, "Buy milk{Enter}");
+    expect(screen.getByRole("alert")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Edit task: Buy eggs" }));
+    editInput = screen.getByDisplayValue("Buy eggs");
+    await user.clear(editInput);
+    await user.type(editInput, "Buy bread{Enter}");
+
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(screen.getByText("Buy bread")).toBeInTheDocument();
+  });
+});
+
 describe("filtering", () => {
   it("filters tasks by Active and Completed", async () => {
     const user = userEvent.setup();

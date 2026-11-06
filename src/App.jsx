@@ -39,7 +39,12 @@ function App() {
     }, 300);
 
     return () => clearTimeout(timeoutId);
-    }, [todos]);
+  }, [todos]);
+
+  const handleInputChange = (value) => {
+    setInput(value);
+    setErrorMessage("");
+  };
 
   const addTodo = () => {
     const trimmed = input.trim();
@@ -50,6 +55,8 @@ function App() {
       setErrorMessage("Task already exists!");
       return;
     }
+
+    setErrorMessage("");
 
     const newTodo = {
       id: crypto.randomUUID(),
@@ -86,6 +93,8 @@ function App() {
       setErrorMessage("Task already exists!");
       return;
     }
+
+    setErrorMessage("");
 
     setTodos(
       todos.map(todo =>
@@ -153,13 +162,14 @@ function App() {
         <h1>Todo App</h1>
         <TodoInput
           input={input}
-          setInput={setInput}
+          setInput={handleInputChange}
           addTodo={addTodo}
           priority={priority}
           setPriority={setPriority}
           dueDate={dueDate}
           setDueDate={setDueDate}
         />
+        {errorMessage && <p className="error-message" role="alert">{errorMessage}</p>}
         <TodoList
           todos={filteredTodos}
           toggleTodo={toggleTodo}
@@ -177,8 +187,6 @@ function App() {
           Clear completed
         </button>
       </div>
-
-      {errorMessage && <p className="error-message">{errorMessage}</p>}
 
       {pendingDeleteId !== null && (
         <ConfirmDialog
