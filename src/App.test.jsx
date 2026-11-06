@@ -349,6 +349,7 @@ describe("due dates", () => {
 describe("debounced persistence", () => {
   afterEach(() => {
     vi.useRealTimers();
+    vi.restoreAllMocks();
   });
 
   it("coalesces rapid changes into a single localStorage write after settling", () => {
@@ -372,6 +373,86 @@ describe("debounced persistence", () => {
     vi.advanceTimersByTime(1);
     expect(todosWrites()).toHaveLength(1);
     expect(JSON.parse(todosWrites()[0][1])).toHaveLength(2);
+  });
+});
+
+describe("saving when the page is hidden", () => {
+  let setItemSpy;
+  const todosWrites = () => setItemSpy.mock.calls.filter(([key]) => key === "todos");
+
+  function addTaskWithoutWaiting(text) {
+    const input = screen.getByPlaceholderText("Add task...");
+    fireEvent.change(input, { target: { value: text } });
+    fireEvent.keyDown(input, { key: "Enter" });
+  }
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    setItemSpy = vi.spyOn(Storage.prototype, "setItem");
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
+
+  it("writes the latest tasks immediately on pagehide, before the debounce fires", () => {
+    render(<App />);
+    addTaskWithoutWaiting("Task A");
+    expect(todosWrites()).toHaveLength(0);
+
+    fireEvent(window, new Event("pagehide"));
+
+    expect(todosWrites()).toHaveLength(1);
+    expect(JSON.parse(todosWrites()[0][1]).map((todo) => todo.text)).toEqual(["Task A"]);
+  });
+
+  it("writes immediately when the page becomes hidden", () => {
+    vi.spyOn(document, "visibilityState", "get").mockReturnValue("hidden");
+    render(<App />);
+    addTaskWithoutWaiting("Task A");
+
+    fireEvent(document, new Event("visibilitychange"));
+
+    expect(todosWrites()).toHaveLength(1);
+    expect(JSON.parse(todosWrites()[0][1]).map((todo) => todo.text)).toEqual(["Task A"]);
+  });
+
+  it("does not write when the page becomes visible again", () => {
+    vi.spyOn(document, "visibilityState", "get").mockReturnValue("visible");
+    render(<App />);
+    addTaskWithoutWaiting("Task A");
+
+    fireEvent(document, new Event("visibilitychange"));
+
+    expect(todosWrites()).toHaveLength(0);
+  });
+
+  it("keeps working when the browser refuses the write", () => {
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+    setItemSpy.mockImplementation(() => {
+      throw new DOMException("quota", "QuotaExceededError");
+    });
+    render(<App />);
+    addTaskWithoutWaiting("Task A");
+
+    expect(() => fireEvent(window, new Event("pagehide"))).not.toThrow();
+
+    expect(consoleError).toHaveBeenCalledWith(
+      "Failed to save todos to localStorage:",
+      expect.any(DOMException)
+    );
+    expect(screen.getByText("Task A")).toBeInTheDocument();
+  });
+
+  it("stops listening after the app unmounts", () => {
+    const { unmount } = render(<App />);
+    addTaskWithoutWaiting("Task A");
+    unmount();
+
+    fireEvent(window, new Event("pagehide"));
+
+    expect(todosWrites()).toHaveLength(0);
   });
 });
 

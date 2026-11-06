@@ -1,10 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./App.css";
 
 import TodoInput from "./components/TodoInput";
 import TodoList from "./components/TodoList";
 import TodoFilters from "./components/TodoFilters";
 import ConfirmDialog from "./components/ConfirmDialog";
+
+function saveTodos(todos) {
+  try {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  } catch (error) {
+    console.error("Failed to save todos to localStorage:", error);
+  }
+}
 
 function App() {
   const [todos, setTodos] = useState(() => {
@@ -29,17 +37,29 @@ function App() {
 
   const PRIORITY_ORDER = { high: 0, normal: 1, low: 2};
 
+  const latestTodos = useRef(todos);
+
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      try {
-        localStorage.setItem("todos", JSON.stringify(todos));
-      } catch (error) {
-        console.error("Failed to save todos to localStorage:", error);
-      }
-    }, 300);
+    latestTodos.current = todos;
+    const timeoutId = setTimeout(() => saveTodos(todos), 300);
 
     return () => clearTimeout(timeoutId);
   }, [todos]);
+
+  useEffect(() => {
+    const flush = () => saveTodos(latestTodos.current);
+    const flushWhenHidden = () => {
+      if (document.visibilityState === "hidden") flush();
+    };
+
+    window.addEventListener("pagehide", flush);
+    document.addEventListener("visibilitychange", flushWhenHidden);
+
+    return () => {
+      window.removeEventListener("pagehide", flush);
+      document.removeEventListener("visibilitychange", flushWhenHidden);
+    };
+  }, []);
 
   const handleInputChange = (value) => {
     setInput(value);
